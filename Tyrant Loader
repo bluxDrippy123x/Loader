@@ -1,0 +1,101 @@
+--[=[
+ d888b  db    db d888888b      .d888b.      db      db    db  .d8b.  
+88' Y8b 88    88   `88'        VP  `8D      88      88    88 d8' `8b 
+88      88    88    88            odD'      88      88    88 88ooo88 
+88  ooo 88    88    88          .88'        88      88    88 88~~~88 
+88. ~8~ 88b  d88   .88.        j88.         88booo. 88b  d88 88   88    @uniquadev
+ Y888P  ~Y8888P' Y888888P      888888D      Y88888P ~Y8888P' YP   YP  CONVERTER 
+]=]
+
+-- Instances: 6 | Scripts: 1 | Modules: 0
+local G2L = {};
+
+-- StarterGui.Loader
+G2L["1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
+G2L["1"]["Name"] = [[Loader]];
+G2L["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
+
+-- StarterGui.Loader.Main
+G2L["2"] = Instance.new("Frame", G2L["1"]);
+G2L["2"]["BorderSizePixel"] = 0;
+G2L["2"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["2"]["Size"] = UDim2.new(0, 434, 0, 234);
+G2L["2"]["Position"] = UDim2.new(0.3122, 0, 0.30597, 0);
+G2L["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["2"]["Name"] = [[Main]];
+G2L["2"]["Visible"] = false -- Initially invisible
+
+-- StarterGui.Loader.Main.UIGradient
+G2L["3"] = Instance.new("UIGradient", G2L["2"]);
+G2L["3"]["Rotation"] = 30;
+G2L["3"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(34, 34, 34)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))};
+
+-- StarterGui.Loader.Main.UICorner
+G2L["4"] = Instance.new("UICorner", G2L["2"]);
+G2L["4"]["CornerRadius"] = UDim.new(0, 9);
+
+-- StarterGui.Loader.Main.TextLabel
+G2L["5"] = Instance.new("TextLabel", G2L["2"]);
+G2L["5"]["BorderSizePixel"] = 0;
+G2L["5"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["5"]["TextSize"] = 65;
+G2L["5"]["FontFace"] = Font.new([[rbxasset://fonts/families/Ubuntu.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+G2L["5"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+G2L["5"]["BackgroundTransparency"] = 1;
+G2L["5"]["Size"] = UDim2.new(0, 434, 0, 234);
+G2L["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+G2L["5"]["Position"] = UDim2.new(0, 0, 0, 0);
+G2L["5"]["Text"] = "Tyrant Hub"; -- Added text
+G2L["5"]["TextWrapped"] = true
+G2L["5"]["TextStrokeTransparency"] = 0.8
+G2L["5"]["Visible"] = false -- Initially invisible
+
+-- StarterGui.Loader.LocalScript
+G2L["6"] = Instance.new("LocalScript", G2L["1"]);
+
+-- StarterGui.Loader.LocalScript
+local function C_6()
+    local script = G2L["6"];
+    -- Get the services
+    local TweenService = game:GetService("TweenService")
+    local Players = game:GetService("Players")
+    
+    -- Get the player and the GUI
+    local player = Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+    local screenGui = G2L["1"]
+    local mainFrame = G2L["2"]
+    local textLabel = G2L["5"]
+    
+    -- Set initial properties for the Main frame and TextLabel
+    mainFrame.Visible = true
+    textLabel.Visible = true
+    mainFrame.BackgroundTransparency = 1
+    textLabel.TextTransparency = 1
+    
+    -- Define the tween information
+    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+    
+    -- Define the tween goals
+    local tweenGoalMain = {BackgroundTransparency = 0}
+    local tweenGoalText = {TextTransparency = 0}
+    
+    -- Create the tweens
+    local tweenMain = TweenService:Create(mainFrame, tweenInfo, tweenGoalMain)
+    local tweenText = TweenService:Create(textLabel, tweenInfo, tweenGoalText)
+    
+    -- Play the tweens in sequence
+    tweenMain:Play()
+    tweenMain.Completed:Connect(function()
+        tweenText:Play()
+        
+        -- Set visibility to false after tweening is complete
+        tweenText.Completed:Connect(function()
+        wait(1)
+            mainFrame.Visible = false
+            textLabel.Visible = false
+        end)
+    end)
+end
+
+task.spawn(C_6);
