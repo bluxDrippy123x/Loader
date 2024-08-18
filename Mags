@@ -1,0 +1,65 @@
+_G.CatchDistance = 0
+
+-- Services
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+-- Variables
+local localPlayer = Players.LocalPlayer
+local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local catchLeft = character:WaitForChild("CatchLeft")
+local catchRight = character:WaitForChild("CatchRight")
+
+-- Create the gray, uncollidable, semi-transparent part
+local grayPart = Instance.new("Part")
+grayPart.Size = Vector3.new(_G.CatchDistance, _G.CatchDistance, _G.CatchDistance)
+grayPart.Color = Color3.fromRGB(128, 128, 128) -- Gray color
+grayPart.Transparency = 1
+grayPart.CanCollide = false
+grayPart.Anchored = true
+grayPart.Parent = Workspace
+
+-- Function to find the closest football
+local function findClosestFootball()
+    local closestFootball = nil
+    local closestDistance = math.huge
+    
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        if obj:IsA("Part") and obj.Name == "Football" then
+            local distance = (obj.Position - humanoidRootPart.Position).magnitude
+            if distance < closestDistance then
+                closestDistance = distance
+                closestFootball = obj
+            end
+        end
+    end
+    
+    return closestFootball
+end
+
+-- Function to check if the player's arms are touching the gray part
+local function areArmsTouching(part)
+    local function isTouching(part1, part2)
+        return (part1.Position - part2.Position).magnitude < (part1.Size.Magnitude + part2.Size.Magnitude) / 2
+    end
+
+    return isTouching(catchLeft, part) or isTouching(catchRight, part)
+end
+
+-- Main loop to continuously check the closest football and arm contact
+while true do
+    wait(0.1)
+    
+    local closestFootball = findClosestFootball()
+    
+    if closestFootball then
+        grayPart.Position = closestFootball.Position
+        
+        if areArmsTouching(grayPart) then
+            closestFootball.Anchored = true
+            closestFootball.Size = Vector3.new(_G.CatchDistance, _G.CatchDistance, _G.CatchDistance)
+            grayPart.Position = closestFootball.Position
+        end
+    end
+end
